@@ -21,7 +21,7 @@ extern "C" {
  * Type of LED
  */
 
-enum e_LED_COLOR { GREEN, RED };
+enum e_LED_COLOR { RED, GREEN };
 enum e_LED_STATE { OFF = 0, ON = 1, BLINK = 2};
 enum e_LED_POS { L1 = 0, L2 = 1, L3 = 2, L4 = 3, T1 = 4, T2 = 5, T3 = 6, T4 = 7,
     CO = 8, ST = 9 };
