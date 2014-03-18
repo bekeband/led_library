@@ -19,7 +19,7 @@ endif
 endif
 
 # Environment
-MKDIR=mkdir -p
+MKDIR=gnumkdir -p
 RM=rm -f 
 MV=mv 
 CP=cp 
@@ -30,12 +30,12 @@ ifeq ($(TYPE_IMAGE), DEBUG_RUN)
 IMAGE_TYPE=debug
 OUTPUT_SUFFIX=a
 DEBUGGABLE_SUFFIX=a
-FINAL_IMAGE=dist/${CND_CONF}/${IMAGE_TYPE}/ELBAG_8873_LCD_LIBRARY.X.${OUTPUT_SUFFIX}
+FINAL_IMAGE=dist/${CND_CONF}/${IMAGE_TYPE}/led_library.${OUTPUT_SUFFIX}
 else
 IMAGE_TYPE=production
 OUTPUT_SUFFIX=a
 DEBUGGABLE_SUFFIX=a
-FINAL_IMAGE=dist/${CND_CONF}/${IMAGE_TYPE}/ELBAG_8873_LCD_LIBRARY.X.${OUTPUT_SUFFIX}
+FINAL_IMAGE=dist/${CND_CONF}/${IMAGE_TYPE}/led_library.${OUTPUT_SUFFIX}
 endif
 
 # Object Directory
@@ -72,7 +72,7 @@ LDLIBSOPTIONS=
 FIXDEPS=fixDeps
 
 .build-conf:  ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-default.mk dist/${CND_CONF}/${IMAGE_TYPE}/ELBAG_8873_LCD_LIBRARY.X.${OUTPUT_SUFFIX}
+	${MAKE} ${MAKE_OPTIONS} -f nbproject/Makefile-default.mk dist/${CND_CONF}/${IMAGE_TYPE}/led_library.${OUTPUT_SUFFIX}
 
 MP_PROCESSOR_OPTION=30F3011
 MP_LINKER_FILE_OPTION=,--script=p30F3011.gld
@@ -82,6 +82,7 @@ ifeq ($(TYPE_IMAGE), DEBUG_RUN)
 ${OBJECTDIR}/led.o: led.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/led.o.d 
+	@${RM} ${OBJECTDIR}/led.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  led.c  -o ${OBJECTDIR}/led.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/led.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PICKIT2=1  -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/led.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
@@ -89,6 +90,7 @@ else
 ${OBJECTDIR}/led.o: led.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/led.o.d 
+	@${RM} ${OBJECTDIR}/led.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  led.c  -o ${OBJECTDIR}/led.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/led.o.d"      -g -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/led.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
@@ -109,16 +111,16 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: archive
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-dist/${CND_CONF}/${IMAGE_TYPE}/ELBAG_8873_LCD_LIBRARY.X.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
+dist/${CND_CONF}/${IMAGE_TYPE}/led_library.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
-	@${RM} dist/${CND_CONF}/${IMAGE_TYPE}/ELBAG_8873_LCD_LIBRARY.X.${OUTPUT_SUFFIX} 
-	${MP_AR} $(MP_EXTRA_AR_PRE)  -omf=elf -r dist/${CND_CONF}/${IMAGE_TYPE}/ELBAG_8873_LCD_LIBRARY.X.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      
+	@${RM} dist/${CND_CONF}/${IMAGE_TYPE}/led_library.${OUTPUT_SUFFIX} 
+	${MP_AR} $(MP_EXTRA_AR_PRE)  -omf=elf -r dist/${CND_CONF}/${IMAGE_TYPE}/led_library.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      
 	
 else
-dist/${CND_CONF}/${IMAGE_TYPE}/ELBAG_8873_LCD_LIBRARY.X.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
+dist/${CND_CONF}/${IMAGE_TYPE}/led_library.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
-	@${RM} dist/${CND_CONF}/${IMAGE_TYPE}/ELBAG_8873_LCD_LIBRARY.X.${OUTPUT_SUFFIX} 
-	${MP_AR} $(MP_EXTRA_AR_PRE)  -omf=elf -r dist/${CND_CONF}/${IMAGE_TYPE}/ELBAG_8873_LCD_LIBRARY.X.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      
+	@${RM} dist/${CND_CONF}/${IMAGE_TYPE}/led_library.${OUTPUT_SUFFIX} 
+	${MP_AR} $(MP_EXTRA_AR_PRE)  -omf=elf -r dist/${CND_CONF}/${IMAGE_TYPE}/led_library.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}      
 	
 endif
 
@@ -138,7 +140,7 @@ endif
 # Enable dependency checking
 .dep.inc: .depcheck-impl
 
-DEPFILES=$(shell "${PATH_TO_IDE_BIN}"mplabwildcard ${POSSIBLE_DEPFILES})
+DEPFILES=$(shell mplabwildcard ${POSSIBLE_DEPFILES})
 ifneq (${DEPFILES},)
 include ${DEPFILES}
 endif

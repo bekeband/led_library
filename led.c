@@ -19,6 +19,9 @@ int DISPLAY_STATE = 0;
 int DISPLAY_COUNTER = 0;
 int HALF_SEC_FLAG = 0;
 
+LED_STATE LED_STATES[10] = {{ON, GREEN},{ON, RED},{ON, GREEN},{ON, GREEN},
+ {ON, RED},{ON, RED},{ON, GREEN},{ON, RED},{BLINK, GREEN},{ON, RED}};
+
 /* void InitTimer1() */
 
 void InitTimer1()
@@ -46,6 +49,12 @@ void InitTimer1()
     IFS0bits.T1IF = 0;      // Clear the TMR1 interrupt status flag.
     IEC0bits.T1IE = 1;      // Enable TIMER1 interrupt.
     T1CONbits.TON = 1;      // Start TMR1 timer.
+}
+
+void SetAllLEDforInput()
+{
+  TRISE |= 0b0000000100110000; // 4,5,8 input
+  TRISC |= 0b0110000000000000; // 13, 14 input
 }
 
 /* Init_LED_Display Initialize LED display timer, and timer interrupt.

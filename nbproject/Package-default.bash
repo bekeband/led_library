@@ -10,9 +10,9 @@ CND_CONF=default
 CND_DISTDIR=dist
 TMPDIR=build/${CND_CONF}/${IMAGE_TYPE}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/ELBAG_8873_LCD_LIBRARY.X.${OUTPUT_SUFFIX}
-OUTPUT_BASENAME=ELBAG_8873_LCD_LIBRARY.X.${OUTPUT_SUFFIX}
-PACKAGE_TOP_DIR=ELBAG8873LCDLIBRARY.X/
+OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/led_library.${OUTPUT_SUFFIX}
+OUTPUT_BASENAME=led_library.${OUTPUT_SUFFIX}
+PACKAGE_TOP_DIR=ledlibrary/
 
 # Functions
 function checkReturnCode
@@ -57,15 +57,15 @@ mkdir -p ${TMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory ${TMPDIR}/ELBAG8873LCDLIBRARY.X/lib
+makeDirectory ${TMPDIR}/ledlibrary/lib
 copyFileToTmpDir "${OUTPUT_PATH}" "${TMPDIR}/${PACKAGE_TOP_DIR}lib/${OUTPUT_BASENAME}" 0644
 
 
 # Generate tar file
 cd "${TOP}"
-rm -f ${CND_DISTDIR}/${CND_CONF}/package/ELBAG8873LCDLIBRARY.X.tar
+rm -f ${CND_DISTDIR}/${CND_CONF}/package/ledlibrary.tar
 cd ${TMPDIR}
-tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/ELBAG8873LCDLIBRARY.X.tar *
+tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/ledlibrary.tar *
 checkReturnCode
 
 # Cleanup

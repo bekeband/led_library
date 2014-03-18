@@ -74,7 +74,7 @@ void PORTRES(volatile unsigned int* ADDRESS, int number);
 
 void LED_ON(enum e_LED_COLOR color, int number); /* set number'th LED ON */
 void LED_OFF(enum e_LED_COLOR color, int number); /* set number'th LED OFF */
-void SetAllLEDforInput();   /* Set ALL LED lines for input.   */
+//void SetAllLEDforInput();   /* Set ALL LED lines for input.   */
 void Init_LED_Display();    /* Initialize LED display timer, and timer interrupt.*/
 
 #ifdef	__cplusplus
