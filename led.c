@@ -12,6 +12,12 @@ LED_PORT LED_PORTS[10]= {{&TRISE, 0x04, &TRISE, 0x05},{&TRISE, 0x05, &TRISE, 0x0
                          {&TRISC, 0x0D, &TRISC, 0x0E},{&TRISE, 0x08, &TRISC, 0x0E},
                          {&TRISE, 0x05, &TRISC, 0x0E},{&TRISE, 0x04, &TRISC, 0x0E}};
 
+/* Array of LED_STATE. There array contans the logical states of LED's.
+ */
+
+ LED_STATE LED_STATES[10] = {{OFF, GREEN},{OFF, GREEN},{OFF, GREEN},{OFF, GREEN},
+ {OFF, GREEN},{OFF, GREEN},{OFF, GREEN},{OFF, GREEN},{OFF, GREEN},{OFF, GREEN}};
+
 /*State of display LED's */
 int DISPLAY_STATE = 0;
 
@@ -19,8 +25,9 @@ int DISPLAY_STATE = 0;
 int DISPLAY_COUNTER = 0;
 int HALF_SEC_FLAG = 0;
 
-LED_STATE LED_STATES[10] = {{ON, GREEN},{ON, RED},{ON, GREEN},{ON, GREEN},
- {ON, RED},{ON, RED},{ON, GREEN},{ON, RED},{BLINK, GREEN},{ON, RED}};
+/* Input DIP switches mirror word. */
+
+unsigned int INPUT_DIPS;
 
 /* void InitTimer1() */
 
@@ -51,20 +58,41 @@ void InitTimer1()
     T1CONbits.TON = 1;      // Start TMR1 timer.
 }
 
-void SetAllLEDforInput()
-{
-  TRISE |= 0b0000000100110000; // 4,5,8 input
-  TRISC |= 0b0110000000000000; // 13, 14 input
+void InitInputs()
+{   // RD2, RD3, RF0 as inputs
+    TRISD |= 0b0000000000001100;
+    TRISF |= 0b0000000000000001;
+
+    // RF1, RF6, RB7, RB8 as output
+    TRISF &= 0b1111111110111101;
+    TRISB &= 0b1111111001111111;
+
+    LATF  |= 0b0000000001000010;     // LATF 1,6 to high
+    LATB  |= 0b0000000110000000;     // LATB 7,8 to high
+
 }
 
 /* Init_LED_Display Initialize LED display timer, and timer interrupt.
- * 
+ *
  */
 
-void Init_LED_Display()   
+void Init_LED_Display()
 {
     InitTimer1();
+    InitInputs();
 }
+
+/******************************************************************************
+ * SetAllLEDforInput() Sets the all LED lines for input that LED's time shared
+ * control.
+ ******************************************************************************/
+
+void SetAllLEDforInput()
+{
+    TRISC |= 0b0110000000000000;
+    TRISE |= 0b0000000100110000;
+}
+
 
 /******************************************************************************
  * PORTSET(volatile unsigned int* ADDRESS, int number) Set the number'th bit of
@@ -86,6 +114,17 @@ void PORTRES(volatile unsigned int* ADDRESS, int number)
 {   int anddata = 0;
     anddata = ~(1 << number);
     *ADDRESS &= anddata;
+}
+
+/******************************************************************************
+ * PORTSR(volatile unsigned int* ADDRESS, int number, int askbit)
+ * Set, or reset the definied port bits.
+ ******************************************************************************/
+void PORTSR(volatile unsigned int* ADDRESS, int number, int askbit)
+{
+    if (askbit)
+        PORTSET(ADDRESS,number);
+    else PORTRES(ADDRESS, number);
 }
 
 
@@ -126,6 +165,42 @@ void LED_OFF(enum e_LED_COLOR color, int number)
     PORTRES((LED_PORTS[number].ADDRESS_RD)+0x02, LED_PORTS[number].bitnumb_RD);
 }
 
+/******************************************************************************
+ void GetInputBits() Input bits reading the DIP switches 16 bits to INPUT_DIP
+******************************************************************************/
+
+void GetInputBits()
+{
+    LATFbits.LATF1 = 0;     // RF1 goes low
+    asm("nop");
+    PORTSR(&INPUT_DIPS, 0, PORTDbits.RD2);
+    PORTSR(&INPUT_DIPS, 4, PORTDbits.RD3);
+    PORTSR(&INPUT_DIPS, 8, PORTFbits.RF0);
+    LATFbits.LATF1 = 1;     // RF1 high again
+    asm("nop");
+    LATFbits.LATF6 = 0;     // RF6 goes low now
+    asm("nop");
+    PORTSR(&INPUT_DIPS, 1, PORTDbits.RD2);
+    PORTSR(&INPUT_DIPS, 5, PORTDbits.RD3);
+    PORTSR(&INPUT_DIPS, 9, PORTFbits.RF0);
+    LATFbits.LATF6 = 1;     // RF6 high again
+    asm("nop");
+    LATBbits.LATB7 = 0;     // RB7 goes low now
+    asm("nop");
+    PORTSR(&INPUT_DIPS, 2, PORTDbits.RD2);
+    PORTSR(&INPUT_DIPS, 6, PORTDbits.RD3);
+    PORTSR(&INPUT_DIPS, 10, PORTFbits.RF0);
+    LATBbits.LATB7 = 1;     // RB7 high again
+    asm("nop");
+    LATBbits.LATB8 = 0;     // RB8 goes low now
+    asm("nop");
+    PORTSR(&INPUT_DIPS, 3, PORTDbits.RD2);
+    PORTSR(&INPUT_DIPS, 7, PORTDbits.RD3);
+    PORTSR(&INPUT_DIPS, 11, PORTFbits.RF0);
+    LATBbits.LATB8 = 1;     // RB8 goes high again
+    asm("nop");
+}
+
 /******************************************************************************/
 /* _T1Interrupt every 0,001 sec                                               */
 /******************************************************************************/
@@ -139,12 +214,11 @@ void __attribute__((interrupt,auto_psv)) _T1Interrupt(void)
         if (DISPLAY_COUNTER++ >= 1000)
         {
             HALF_SEC_FLAG = 0;
-/*            U1TXREG = 'A';
-            if (TXCHAR == 80) TXCHAR = ' ';*/
             DISPLAY_COUNTER = 0;
+            /* Input bits reading, and make mirror on every half seconds. */
+            GetInputBits();
         };
 
-//        GetInputBits();
 
         if ((DISPLAY_STATE) == 10)
         {
